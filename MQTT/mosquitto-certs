@@ -1,0 +1,32 @@
+#!/bin/bash
+rm /etc/mosquitto/certs/*
+
+ # Variables pour la génération des certificats
+    country="FR"
+    state="BFC"
+    city="Montbeliard"
+    organization="IUT"
+    common_name_CA=""
+    common_name_mosquitto="192.168.1.50"
+
+    # Vérifier si les certificats existent déjà
+    if [ ! -f "/etc/mosquitto/certs/ca.crt" ]; then
+        # Génération du certificat auto-signé CA s'il n'existe pas
+        openssl genrsa -des3 -out ca.key 2048
+        openssl req -new -x509 -days 1826 -key ca.key -out ca.crt\
+            -subj "/C=$country/ST=$state/L=$city/O=$organization/CN=$common_name_CA"
+        # Déplacer les certificats générés
+        mv ca.* /etc/mosquitto/certs/
+    fi
+
+    if [ ! -f "/etc/mosquitto/certs/server.crt" ] || [ ! -f "/etc/mosquitto/certs/server.key" ]; then
+        # Génération du certificat pour le serveur MQTT s'ils n'existent pas
+        openssl genrsa -out server.key 2048
+        openssl req -new -out server.csr -key server.key \
+            -subj "/C=$country/ST=$state/L=$city/O=$organization/CN=$common_name_mosquitto"
+        openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 360
+        # Déplacer les certificats générés
+        mv server.* /etc/mosquitto/certs/
+    fi
+
+chmod 644 /etc/mosquitto/certs/*

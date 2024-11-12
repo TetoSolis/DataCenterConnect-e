@@ -1,0 +1,107 @@
+#include <SPI.h>
+#include <MFRC522.h>
+#include <WiFi.h>
+
+#define RST_PIN 22  // Définissez le numéro de broche pour RST.
+#define SS_PIN  5   // Définissez le numéro de broche pour SS.
+
+MFRC522 mfrc522(SS_PIN, RST_PIN); // Créez une instance de MFRC522.
+
+#define MAX_UIDS 10  // Capacité maximale de UIDs autorisés.
+byte authorizedUIDs[MAX_UIDS][4]; // Tableau pour stocker les UIDs autorisés.
+byte numStoredUIDs = 0;  // Nombre actuel de UIDs stockés.
+
+byte adminUID[4] = {0x30, 0x84, 0x67, 0x7A}; // UID de la carte administrateur
+byte otherUID[4] = {0xDE, 0xAD, 0xBE, 0xEF}; // Autre UID
+
+bool isAdminMode = false;  // Variable pour suivre l'état du mode administrateur
+
+// Déclaration des fonctions
+bool checkUID(byte *cardUID, byte *authorizedUID, byte uidLength);
+void readUID(byte *uid, byte uidLength);
+bool addUID(const byte *newUID);
+
+void setup() {
+    Serial.begin(115200);
+    SPI.begin();
+    mfrc522.PCD_Init();
+
+    delay(4);
+    mfrc522.PCD_DumpVersionToSerial();
+    Serial.println(F("Placez un PICC pour voir UID, SAK, type et blocs de données..."));
+
+    addUID(adminUID); // Ajoutez l'UID administrateur
+    addUID(otherUID); // Ajoutez un autre UID pré-autorisé
+}
+
+void loop() {
+    if (!mfrc522.PICC_IsNewCardPresent() || !mfrc522.PICC_ReadCardSerial()) {
+        return;
+    }
+
+    readUID(mfrc522.uid.uidByte, mfrc522.uid.size);
+
+    if (checkUID(mfrc522.uid.uidByte, adminUID, 4)) {
+        if (isAdminMode) {
+            Serial.println(F("Mode administrateur désactivé."));
+            isAdminMode = false;
+        } else {
+            Serial.println(F("Mode administrateur activé. Passez une carte pour l'enregistrer."));
+            isAdminMode = true;
+            mfrc522.PICC_HaltA();
+            delay(2000);
+            return;
+        }
+    }
+
+    if (isAdminMode) {
+        Serial.println(F("Enregistrement de la nouvelle carte..."));
+        if (addUID(mfrc522.uid.uidByte)) {
+            Serial.println(F("Nouvelle carte enregistrée avec succès."));
+            isAdminMode = false;
+        } else {
+            Serial.println(F("Échec de l'enregistrement de la carte."));
+        }
+    } else {
+        if (checkUID(mfrc522.uid.uidByte, authorizedUIDs[numStoredUIDs - 1], 4)) {
+            Serial.println(F("Carte autorisée détectée !"));
+        } else {
+            Serial.println(F("Carte non autorisée."));
+        }
+    }
+
+    mfrc522.PICC_HaltA();
+    delay(2000);
+}
+
+bool addUID(const byte *newUID) {
+    if (numStoredUIDs >= MAX_UIDS) {
+        Serial.println(F("Espace de stockage insuffisant pour un nouveau UID."));
+        return false;
+    }
+
+    for (byte i = 0; i < 4; i++) {
+        authorizedUIDs[numStoredUIDs][i] = newUID[i];
+    }
+
+    numStoredUIDs++;
+    return true;
+}
+
+bool checkUID(byte *cardUID, byte *authorizedUID, byte uidLength) {
+    for (byte i = 0; i < uidLength; i++) {
+        if (cardUID[i] != authorizedUID[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void readUID(byte *uid, byte uidLength) {
+    Serial.print(F("UID de la carte :"));
+    for (byte i = 0; i < uidLength; i++) {
+        Serial.print(uid[i] < 0x10 ? " 0" : " ");
+        Serial.print(uid[i], HEX);
+    }
+    Serial.println();
+}

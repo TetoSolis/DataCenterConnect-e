@@ -1,0 +1,98 @@
+#!/bin/bash
+
+# Fonction pour vérifier et installer Mosquitto si nécessaire
+check_install_mosquitto() {
+    printf "\nVérification de l'installation de Mosquitto...\n"
+    
+    # Vérifier si Mosquitto est déjà installé
+    if ! command -v mosquitto &> /dev/null; then
+        printf "Mosquitto n'est pas installé. Installation en cours...\n"
+        apt update && apt upgrade -y
+        apt install mosquitto mosquitto-clients openssl -y
+        printf "Mosquitto installé avec succès.\n"
+    else
+        printf "Mosquitto est déjà installé.\n"
+    fi
+}
+
+# Fonction pour configurer Mosquitto
+configure_mosquitto() {
+    printf "\nDébut de la configuration de Mosquitto\n"
+
+    # Arrêt du service Mosquitto et création du répertoire pour les certificats
+    service mosquitto stop
+    mkdir -p /etc/mosquitto/certs
+
+    # Variables pour la génération des certificats
+    country="FR"
+    state="BFC"
+    city="Montbeliard"
+    organization="IUT"
+    common_name_CA=""
+    common_name_mosquitto="192.168.1.50"
+
+    # Vérifier si les certificats existent déjà
+    if [ ! -f "/etc/mosquitto/certs/ca.crt" ]; then
+        # Génération du certificat auto-signé CA s'il n'existe pas
+        openssl genrsa -des3 -out ca.key 2048
+        openssl req -new -x509 -days 1826 -key ca.key -out ca.crt\
+            -subj "/C=$country/ST=$state/L=$city/O=$organization/CN=$common_name_CA"
+        # Déplacer les certificats générés
+        mv ca.* /etc/mosquitto/certs/
+    fi
+
+    if [ ! -f "/etc/mosquitto/certs/server.crt" ] || [ ! -f "/etc/mosquitto/certs/server.key" ]; then
+        # Génération du certificat pour le serveur MQTT s'ils n'existent pas
+        openssl genrsa -out server.key 2048
+        openssl req -new -out server.csr -key server.key \
+            -subj "/C=$country/ST=$state/L=$city/O=$organization/CN=$common_name_mosquitto"
+        openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 360
+        # Déplacer les certificats générés
+        mv server.* /etc/mosquitto/certs/
+    fi
+
+    # Fixer les permissions des certificats
+    chmod 644 /etc/mosquitto/certs/*
+
+    # Chemin du fichier de mots de passe
+    password_file="/etc/mosquitto/auth.txt"
+
+    # Vérifier si le fichier de mots de passe existe déjà
+    if [ -f "$password_file" ]; then
+        printf "Le fichier de mots de passe existe déjà.\n"
+    else
+        printf "Le fichier de mots de passe n'existe pas. Création du fichier...\n"
+        mosquitto_passwd -c "$password_file" "$default_username"
+        chmod 600 "$password_file"
+    fi
+
+    # Ajout de l'utilisateur par défaut
+    default_username="GRP-1-IOM"
+    default_password="Porygon-Z#1"
+
+    # Vérifier si l'utilisateur par défaut existe déjà dans le fichier de mots de passe
+    if grep -q "^$default_username:" "$password_file"; then
+        printf "L'utilisateur par défaut existe déjà dans le fichier de mots de passe.\n"
+    else
+        printf "Ajout de l'utilisateur par défaut dans le fichier de mots de passe...\n"
+        echo "$default_username:$(mosquitto_passwd -p <<< "$default_password")" >> "$password_file"
+        printf "Utilisateur par défaut ajouté avec succès.\n"
+    fi
+
+    # Configuration de Mosquitto dans le fichier de configuration
+    printf "\nConfiguration de Mosquitto\n"
+    echo "listener 8883
+allow_anonymous false
+password_file /etc/mosquitto/auth.txt
+cafile /etc/mosquitto/certs/ca.crt
+keyfile /etc/mosquitto/certs/server.key
+certfile /etc/mosquitto/certs/server.crt" > /etc/mosquitto/conf.d/default.conf
+
+    printf "\nConfiguration de Mosquitto terminée.\n"
+}
+
+# Appeler la fonction pour vérifier et installer Mosquitto si nécessaire
+check_install_mosquitto
+
+# Appeler la fonction pour configurer Mosquitto
+configure_mosquitto

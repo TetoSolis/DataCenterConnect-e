@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+    echo "Utilisation: $0 <topic> <message>"
+    echo "Exemple: $0 mytopic 'Hello, world!'"
+    exit 1
+fi
+
+topic=$1
+message=$2
+
+mosquitto_pub -h 192.168.1.50 -p 8883 -t "$topic" -m "$message" --cafile /etc/mosquitto/certs/ca.crt -u GRP-1-IOM -P Porygon-Z#1 -v

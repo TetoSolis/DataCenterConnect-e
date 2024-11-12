@@ -1,0 +1,26 @@
+// Fonction de réception des messages MQTT
+void onMqttMessage(char* topic, byte* payload, unsigned int length) {
+  Serial.print(topic);
+  
+  // Convertir le payload en une chaîne de caractères
+  String payloadStr = "";
+  for (int i = 0; i < length; i++) {
+    payloadStr += (char)payload[i];
+  }
+  // Imprime le contenu du topic
+  Serial.println(payloadStr);
+
+  char buffer[40];
+  // Comparer la chaîne de caractères du payload avec "true" ou "false"
+  if(payloadStr == "true"){
+    // Allumer la LED
+    digitalWrite(LED_BUILTIN, LOW);
+    sprintf(buffer, "L'%s a allumé sa LED.", ESPName);
+  } else if(payloadStr == "false"){
+    // Eteindre la LED
+    digitalWrite(LED_BUILTIN, HIGH);
+    sprintf(buffer, "L'%s a éteint sa LED.", ESPName);
+  }
+  // Afficher le message "allumé" ou "étient"
+  Serial.println(buffer);
+}

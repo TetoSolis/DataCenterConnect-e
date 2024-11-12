@@ -1,0 +1,7 @@
+#!/bin/bash
+
+service mosquitto stop
+
+printf "Lancement du Service Mosquitto..."
+
+/usr/sbin/mosquitto -c /etc/mosquitto/conf.d/default.conf

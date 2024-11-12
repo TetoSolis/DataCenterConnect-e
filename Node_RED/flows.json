@@ -1,0 +1,351 @@
+[
+    {
+        "id": "6aca5a89d5a41c9f",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "62d9b33124f0f98b",
+        "type": "inject",
+        "z": "6aca5a89d5a41c9f",
+        "name": "ON",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 60,
+        "wires": [
+            [
+                "d5900712a15e9cc4"
+            ]
+        ]
+    },
+    {
+        "id": "31a9a3af391a7c8d",
+        "type": "inject",
+        "z": "6aca5a89d5a41c9f",
+        "name": "OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 120,
+        "wires": [
+            [
+                "d5900712a15e9cc4"
+            ]
+        ]
+    },
+    {
+        "id": "4ae21d66d4ab1d60",
+        "type": "ui_switch",
+        "z": "6aca5a89d5a41c9f",
+        "name": "",
+        "label": "Yellow",
+        "tooltip": "",
+        "group": "a25ae4759e6ed199",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 130,
+        "y": 180,
+        "wires": [
+            [
+                "d5900712a15e9cc4"
+            ]
+        ]
+    },
+    {
+        "id": "d5900712a15e9cc4",
+        "type": "rpi-gpio out",
+        "z": "6aca5a89d5a41c9f",
+        "name": "",
+        "pin": "18",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 340,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "8b0f203a8e8a2df9",
+        "type": "rpi-gpio out",
+        "z": "6aca5a89d5a41c9f",
+        "name": "",
+        "pin": "24",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 360,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "2097b1b8e3db8d49",
+        "type": "ui_switch",
+        "z": "6aca5a89d5a41c9f",
+        "name": "",
+        "label": "Green",
+        "tooltip": "",
+        "group": "a25ae4759e6ed199",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 130,
+        "y": 380,
+        "wires": [
+            [
+                "8b0f203a8e8a2df9"
+            ]
+        ]
+    },
+    {
+        "id": "831d23b1bae49e7a",
+        "type": "inject",
+        "z": "6aca5a89d5a41c9f",
+        "name": "ON",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "8b0f203a8e8a2df9"
+            ]
+        ]
+    },
+    {
+        "id": "ee9e275deab6f3e4",
+        "type": "inject",
+        "z": "6aca5a89d5a41c9f",
+        "name": "OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 320,
+        "wires": [
+            [
+                "8b0f203a8e8a2df9"
+            ]
+        ]
+    },
+    {
+        "id": "5f89398473ab9681",
+        "type": "inject",
+        "z": "6aca5a89d5a41c9f",
+        "name": "On",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 460,
+        "wires": [
+            [
+                "0b1fd9c1cf19c572"
+            ]
+        ]
+    },
+    {
+        "id": "0ca3272e8d93ef79",
+        "type": "inject",
+        "z": "6aca5a89d5a41c9f",
+        "name": "OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 520,
+        "wires": [
+            [
+                "0b1fd9c1cf19c572"
+            ]
+        ]
+    },
+    {
+        "id": "deb3e9242aa103d4",
+        "type": "ui_switch",
+        "z": "6aca5a89d5a41c9f",
+        "name": "",
+        "label": "Red",
+        "tooltip": "",
+        "group": "a25ae4759e6ed199",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 130,
+        "y": 580,
+        "wires": [
+            [
+                "0b1fd9c1cf19c572"
+            ]
+        ]
+    },
+    {
+        "id": "0b1fd9c1cf19c572",
+        "type": "rpi-gpio out",
+        "z": "6aca5a89d5a41c9f",
+        "name": "",
+        "pin": "25",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 380,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "a25ae4759e6ed199",
+        "type": "ui_group",
+        "name": "LED",
+        "tab": "ab564f2c892e802a",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ab564f2c892e802a",
+        "type": "ui_tab",
+        "name": "Groupe 1",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
