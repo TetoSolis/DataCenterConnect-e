@@ -81,10 +81,10 @@ Téléversez les fichiers `.ino` sur les ESP8266 via l'IDE Arduino, en configura
 ---
 
 ## 👥 Contributeurs
-- Guillaume et l'équipe IoT.
-  - [Théo Marchand](https://github.com/Sh1nuuu)
-  - [Xavier Knoeppfler](https://github.com/StarstruckFlora)
-  - [Yanis Dezzaz](https://github.com/yanis3333)
+- [Guillaume Greder](https://github.com/TetoSolis)
+- [Théo Marchand](https://github.com/Sh1nuuu)
+- [Xavier Knoeppfler](https://github.com/StarstruckFlora)
+- [Yanis Dezzaz](https://github.com/yanis3333)
 
 ---
 
